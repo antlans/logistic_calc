@@ -34,36 +34,35 @@ prices = {
     'crate': 30,
     'oversize': 30
 }
-# Коэффициенты определения негабаритности
-size_min = 0.260  # Если ниже то габарит, иначе - негабарит
-size_max = 1.000
-weight_min = 250.000  # Если ниже то габарит, иначе - негабарит
-weight_max = 20000.000
+check_oversize = {
+    'weight': 250.000,  # кг
+    'size': 10.000  # м3
+}
 
 # Проверка обрешётки
 if my_order['crate']:  # Если выбрана обрещетка, тогда увеличиваем габариты груза на коэффициент
-    my_order['weight'] = my_order['weight']*(1+(prices['crate']/100))
-    my_order['size'] = my_order['size']*(1+(prices['crate']/100))
+    my_order['weight'] = my_order['weight'] * (1+(prices['crate']/100))
+    my_order['size'] = my_order['size'] * (1+(prices['crate']/100))
     # print('\n' + str(my_order))
 
 # Определение способа расчета по весу или объему
 if my_order['size'] * 200 <= my_order['weight']:
     print('\nСчитаем по весу')
 
-    if my_order['weight'] <= weight_min:
+    if my_order['weight'] <= check_oversize['weight']:
         my_order['cost'] = prices['weight']['min']
         print("Вес: Минимальный тариф")
     else:
         my_order['oversize'] = True
-        my_order['cost'] = (my_order['weight']*prices['weight']['max'])*(1+(prices['oversize']/100))
+        my_order['cost'] = (my_order['weight']*prices['weight']['max']) * (1+(prices['oversize']/100))
         print("Вес: Максимальный тариф")
 else:
-    if my_order['size'] <= size_min:
-        my_order['cost'] = prices['weight']['min']
+    if my_order['size'] <= check_oversize['size']:
+        my_order['cost'] = prices['size']['max'] * my_order['size']
         print("Объём: Минимальный тариф")
     else:
         my_order['oversize'] = True
-        my_order['cost'] = (my_order['size']*prices['size']['max'])*(1+(prices['oversize']/100))
+        my_order['cost'] = (my_order['size']*prices['size']['max']) * (1+(prices['oversize']/100))
         print("Объём: Максимальный тариф")
 
 # Итоговая стоимость
